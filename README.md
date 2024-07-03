@@ -1,4 +1,4 @@
 # FocusBro
 
-# A Arshad Khan
-# N Jacinth Ruel Knox
+# Arshad Khan
+# Jacinth Ruel Knox
