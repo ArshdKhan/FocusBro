@@ -7,32 +7,47 @@
     <link rel="stylesheet" href="styles/styles.css">
 </head>
 <body>
-    <h1>FocusBro</h1>
+    <header>
+        <h1>FocusBro</h1>
+        <p>Enhance your focus and productivity.</p>
+    </header>
+
     <main>
-        <section>
-            <h2>Usage</h2>
-            <p>Donut Chart here and the total time used today</p>
+        <nav>
+            <button class="nav-button" onclick="showSection('graphSection')">Usage Graph</button>
+            <button class="nav-button" onclick="showSection('timerSection')">Set Timer</button>
+            <button class="nav-button" onclick="showSection('youtubeSection')">YouTube Recommendations</button>
+        </nav>
+
+        <section id="graphSection" class="content-section">
+            <h2>Usage Graph</h2>
+            <p>View your website usage in a graph.</p>
+            <canvas id="usageChart" width="400" height="400"></canvas>
         </section>
 
-        <section>
+        <section id="timerSection" class="content-section" style="display:none;">
             <h2>Set Timer</h2>
-            <p>here you can set time limit for each website</p>
+            <p>Set a timer for your website usage.</p>
+            <label for="website">Website:</label>
+            <input type="text" id="website" name="website" placeholder="e.g., www.example.com">
+            <label for="dailyLimit">Daily Limit (minutes):</label>
+            <input type="number" id="dailyLimit" name="dailyLimit" min="1">
+            <label for="sessionLimit">Session Limit (minutes):</label>
+            <input type="number" id="sessionLimit" name="sessionLimit" min="1">
+            <button class="action-button" onclick="setTimer()">Set Timer</button>
         </section>
 
-        <section>
-            <h2>Youtube</h2>
-            <p>you can enable or disable youtube recommendations here</p>
+        <section id="youtubeSection" class="content-section" style="display:none;">
+            <h2>YouTube Recommendations Remover</h2>
+            <p>Remove YouTube recommendations to avoid distractions.</p>
+            <button class="action-button" id="removeRecommendationsBtn">Toggle Recommendations</button>
         </section>
     </main>
-    
-    <footer>
-        
-        <a href="#" class="button">Click Me</a>
 
-        <p>FocusBro is a web application that helps you focus on your work by blocking distracting websites.</p>
-        <p>It is a simple and easy-to-use tool that helps you stay focused and productive.</p>
-        <p>FocusBro is free and open-source. You can download it from <a href="https://github.com/ArshdKhan/FocusBro">GitHub</a>.</p> 
-    </footer> 
+    <footer>
+        <p>&copy; 2024 FocusBro. All rights reserved.</p>
+    </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
