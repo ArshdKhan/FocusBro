@@ -36,8 +36,8 @@
         "128": "icons/icon128.png"
     },
     "web_accessible_resources": [
-        "icons/icon16.png",
-        "icons/icon48.png",
-        "icons/icon128.png"
+        { "resources": ["icons/icon16.png"] },
+        { "resources": ["icons/icon48.png"] },
+        { "resources": ["icons/icon128.png"] }
     ]
 }
