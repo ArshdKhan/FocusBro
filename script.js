@@ -25,9 +25,9 @@ function showSection(sectionId) {
     const sections = document.querySelectorAll('.content-section');
     sections.forEach(section => {
         if (section.id === sectionId) {
-            section.classList.add('active');
+            section.style.display = 'block';
         } else {
-            section.classList.remove('active');
+            section.style.display = 'none';
         }
     });
 }
