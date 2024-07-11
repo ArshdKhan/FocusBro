@@ -10,14 +10,15 @@
         "webNavigation",
         "background",
         "tabs",
-        "idle"
+        "idle",
+        "*://*/*"
     ],
     "background": {
         "scripts": ["background.js"],
         "persistent": true
     },
     "action": {
-        "default_popup": "index.html",
+        "default_popup": "popup.html",
         "default_icon": {
             "16": "icons/icon16.png",
             "48": "icons/icon48.png",

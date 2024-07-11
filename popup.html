@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FocusBro</title>
     <link rel="stylesheet" href="styles/styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <script src="lib/Chart.js"></script>
 </head>
 <body>
     <header>
@@ -15,9 +15,9 @@
 
     <main>
         <nav>
-            <button class="nav-button" onclick="showSection('graphSection')">Usage Graph</button>
-            <button class="nav-button" onclick="showSection('timerSection')">Set Timer</button>
-            <button class="nav-button" onclick="showSection('youtubeSection')">YouTube Recommendations</button>
+            <button class="nav-button" id="graphBtn">Usage Graph</button>
+            <button class="nav-button" id="timerBtn">Set Timer</button>
+            <button class="nav-button" id="youtubeBtn">YouTube Recommendations</button>
         </nav>
 
         <section id="graphSection" class="content-section">
@@ -35,7 +35,7 @@
             <input type="number" id="dailyLimit" name="dailyLimit" min="1">
             <label for="sessionLimit">Session Limit (minutes):</label>
             <input type="number" id="sessionLimit" name="sessionLimit" min="1">
-            <button class="action-button" onclick="setTimer()">Set Timer</button>
+            <button class="action-button" id="settimerBtn">Set Timer</button>
         </section>
 
         <section id="youtubeSection" class="content-section" style="display:none;">

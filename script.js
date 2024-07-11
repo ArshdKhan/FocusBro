@@ -1,11 +1,23 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Show the graph section by default
     showSection('graphSection');
 
-    // Bind click event for Remove Recommendations button
+    // Add event listeners for navigation buttons
+    document.getElementById('graphBtn').addEventListener('click', function() {
+        showSection('graphSection');
+    });
+
+    document.getElementById('timerBtn').addEventListener('click', function() {
+        showSection('timerSection');
+    });
+
+    document.getElementById('youtubeBtn').addEventListener('click', function() {
+        showSection('youtubeSection');
+    });
+
     document.getElementById('removeRecommendationsBtn').addEventListener('click', removeYouTubeRecommendations);
 
-    // Display usage graph on popup load
+    document.getElementById('settimerBtn').addEventListener('click', setTimer);
+
     showUsageGraph();
 });
 
