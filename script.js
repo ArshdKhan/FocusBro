@@ -63,9 +63,15 @@ function removeYouTubeRecommendations() {
 function showUsageGraph() {
     chrome.storage.local.get(['usageData'], function(result) {
         const usageData = result.usageData || {};
+        console.log('Retrieved usage data:', usageData);
 
         const labels = Object.keys(usageData);
         const data = Object.values(usageData);
+
+        if (labels.length === 0 || data.length === 0) {
+            console.log('No usage data available to display.');
+            return;
+        }
 
         const ctx = document.getElementById('usageChart').getContext('2d');
         const chart = new Chart(ctx, {

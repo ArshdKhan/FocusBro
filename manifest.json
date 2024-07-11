@@ -4,18 +4,14 @@
     "description": "FocusBro is a browser extension that helps you focus on your work by blocking distracting websites.",
     "manifest_version": 3,
     "permissions": [
-        "storage",
-        "activeTab",
-        "scripting",
-        "webNavigation",
-        "background",
         "tabs",
-        "idle",
+        "storage",
+        "alarms",
+        "activeTab",
         "*://*/*"
     ],
     "background": {
-        "scripts": ["background.js"],
-        "persistent": true
+        "service_worker": "background.js"
     },
     "action": {
         "default_popup": "popup.html",
