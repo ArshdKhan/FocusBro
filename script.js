@@ -85,7 +85,7 @@ function showUsageGraph() {
                 }]
             },
             options: {
-                responsive: true
+                responsive: true,
             }
         });
     });
