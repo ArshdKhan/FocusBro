@@ -4,10 +4,25 @@ let activeTabDomain = null;
 let activeTabInterval = null;
 const trackingInterval = 60000; // 1 minute
 
-// Initialize usageData from storage or as an empty object
-chrome.storage.local.get(['usageData'], result => {
-    usageData = result.usageData || {};
-});
+// Function to initialize or reset usageData
+function initializeUsageData() {
+    const today = new Date().setHours(0, 0, 0, 0); // Today's date at midnight
+    chrome.storage.local.get(['lastResetTime'], result => {
+        const lastResetTime = result.lastResetTime || 0;
+        if (lastResetTime < today) {
+            usageData = {};
+            chrome.storage.local.set({ usageData: {}, lastResetTime: today });
+            console.log('Usage data reset for the day.');
+        } else {
+            chrome.storage.local.get(['usageData'], result => {
+                usageData = result.usageData || {};
+            });
+        }
+    });
+}
+
+// Initialize or reset usageData on extension startup
+initializeUsageData();
 
 // Event listener for when a tab is activated
 chrome.tabs.onActivated.addListener(activeInfo => {
@@ -49,11 +64,16 @@ function updateActiveTab(tabId) {
 chrome.alarms.create('trackUsage', { periodInMinutes: 1 });
 chrome.alarms.onAlarm.addListener(alarm => {
     if (alarm.name === 'trackUsage' && activeTabId) {
-        // Log usage data at regular intervals
+        // Only update usage data if the active tab is still the same
         if (activeTabDomain) {
             usageData[activeTabDomain] += 1;
             console.log(`Alarm triggered. Updated usage data for ${activeTabDomain}: ${usageData[activeTabDomain]} minutes`);
             chrome.storage.local.set({ usageData: usageData });
         }
     }
+});
+
+// Listen for extension startup
+chrome.runtime.onStartup.addListener(() => {
+    initializeUsageData();
 });
