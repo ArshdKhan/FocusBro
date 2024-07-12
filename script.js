@@ -81,8 +81,7 @@ function showUsageGraph() {
                 datasets: [{
                     label: 'Usage',
                     data: data,
-                    backgroundColor: generateColors(data.length),
-                    borderWidth : 20
+                    backgroundColor: generateColors(data.length)
                 }]
             },
             options: {
