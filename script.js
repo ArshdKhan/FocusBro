@@ -86,7 +86,7 @@ function showUsageGraph() {
             },
             options: {
                 responsive: true,
-                cutout : '95%'
+                cutout : 300
             }
         });
     });
