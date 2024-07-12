@@ -82,11 +82,12 @@ function showUsageGraph() {
                     label: 'Usage',
                     data: data,
                     backgroundColor: generateColors(data.length),
+                    borderWidth : 20
                 }]
             },
             options: {
                 responsive: true,
-                cutout : 300
+                cutout : '90%'
             }
         });
     });
