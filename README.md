@@ -55,9 +55,10 @@ FocusBro is a Chrome extension designed to help users manage their time online b
 ![Screenshot 1](screenshots/screenshot1.png)
 ![Screenshot 2](screenshots/screenshot2.png)
 
-## Contributing
+## Contributors
 
-Contributions are welcome! If you have any ideas or suggestions to improve this extension, please create an issue or submit a pull request.
+- **ArshdKhan** - [ArshdKhan](https://github.com/ArshdKhan)
+- **NandigalaJacinth** - [NandigalaJacinth](https://github.com/NandigalaJacinth)
 
 ## License
 
