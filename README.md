@@ -1,5 +1,7 @@
 # FocusBro
 
+![FocusBro Logo](icons/icon128.png)
+
 FocusBro is a Chrome extension designed to help users manage their time online by setting limits on website usage and removing YouTube recommendations. It aims to improve productivity by minimizing distractions and promoting focused browsing sessions.
 
 ## Features
