@@ -3,7 +3,7 @@ body {
     line-height: 1.6;
     max-width: 600px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 7px; /* Reduced padding */
     background-color: #f4f4f4;
     color: #333;
 }
@@ -12,41 +12,43 @@ header {
     text-align: center;
     background: linear-gradient(135deg, #ff9f1a, #ffbf69); /* Gradient with Yellow */
     color: white;
-    padding: 20px 0;
+    padding: 10px 0; /* Reduced padding */
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 header h1 {
     margin: 0;
-    font-size: 2.5em;
+    font-size: 2em; /* Reduced font size */
 }
 
 header p {
     margin: 0;
-    font-size: 1.2em;
+    font-size: 1em; /* Reduced font size */
 }
 
 main {
-    margin-top: 20px;
+    margin-top: 10px; /* Reduced margin */
 }
 
 nav {
     display: flex;
     justify-content: space-around;
-    margin-bottom: 20px;
+    margin-bottom: 10px; /* Reduced margin */
 }
 
 .nav-button, .action-button, .usage-button, .set-timer-button, .youtube-button {
     background: linear-gradient(135deg, #f39c12, #ffb142); /* Yellow Gradient */
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 8px 16px; /* Reduced padding */
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.3s ease;
     text-shadow: 0 1px 1px rgba(0,0,0,0.2); /* Text shadow for contrast */
     font-weight: bold; /* Make text bold */
+    margin: 0 3px;
+    font-size: 0.9em; /* Reduced font size */
 }
 
 .nav-button:hover, .action-button:hover, .usage-button:hover, .set-timer-button:hover, .youtube-button:hover {
@@ -56,35 +58,49 @@ nav {
 
 .content-section {
     background: white;
-    padding: 20px;
+    padding: 10px; /* Reduced padding */
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     display: none; /* Initially hide all sections */
+    margin-bottom: 10px; /* Reduced margin below sections */
 }
 
 .content-section.active {
     display: block; /* Show only the active section */
 }
 
+.content-section h2 {
+    margin-top: 0; /* Reduced margin above the heading */
+    margin-bottom: 5px; /* Reduced margin below the heading */
+    font-size: 1.5em; /* Reduced font size */
+}
+
+.content-section p {
+    margin-top: 0; /* Reduced margin above the paragraph */
+    margin-bottom: 5px; /* Reduced margin below the paragraph */
+    font-size: 0.9em; /* Reduced font size */
+}
+
 label {
     display: block;
     margin-top: 10px;
     color: #333;
+    font-size: 0.9em; /* Reduced font size */
 }
 
 input[type="number"], input[type="text"] {
     width: calc(100% - 22px);
-    padding: 10px;
+    padding: 8px; /* Reduced padding */
     margin-top: 5px;
     border: 1px solid #ccc;
     border-radius: 5px;
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    font-size: 0.9em; /* Reduced font size */
 }
-
 
 footer {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 10px; /* Reduced margin */
     padding: 10px;
     background: linear-gradient(135deg, #333333, #666666);
     color: white;
