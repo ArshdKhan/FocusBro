@@ -65,16 +65,18 @@ function showUsageGraph() {
         const usageData = result.usageData || {};
         console.log('Retrieved usage data:', usageData);
 
-        const labels = Object.keys(usageData);
-        const data = Object.values(usageData);
+        // Filter labels and data based on the desired format (e.g., labels containing a '.')
+        const filteredEntries = Object.entries(usageData).filter(([label, value]) => label.includes('.'));
+        const filteredLabels = filteredEntries.map(([label, value]) => label);
+        const filteredData = filteredEntries.map(([label, value]) => value);
 
-        if (labels.length === 0 || data.length === 0) {
+        if (filteredLabels.length === 0 || filteredData.length === 0) {
             console.log('No usage data available to display.');
             return;
         }
 
         // Calculate the total usage time
-        const totalUsage = data.reduce((a, b) => a + b, 0);
+        const totalUsage = filteredData.reduce((a, b) => a + b, 0);
         const totalHours = Math.floor(totalUsage / 60);
         const totalMinutes = totalUsage % 60;
         const totalTimeText = `${totalHours} hrs ${totalMinutes} mins`;
@@ -86,11 +88,11 @@ function showUsageGraph() {
         const chart = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: labels,
+                labels: filteredLabels,
                 datasets: [{
                     label: 'Usage',
-                    data: data,
-                    backgroundColor: generateColors(data.length),
+                    data: filteredData,
+                    backgroundColor: generateColors(filteredData.length),
                     borderWidth: 1
                 }]
             },
@@ -100,9 +102,22 @@ function showUsageGraph() {
                 plugins: {
                     legend: {
                         display: true,
-                        position: 'top',
+                        position: 'bottom',
                         labels: {
-                            color: 'black' // Set the legend text color to black
+                            color: '#333', // Set the legend text color to a dark shade
+                            font: {
+                                family: 'Helvetica, Arial, sans-serif', // Change font family to a modern sans-serif
+                                size: 14, // Change font size to 14
+                                style: 'normal' // Ensure font style is normal (not italic)
+                            },
+                            padding: 15, // Add padding around legend items for better spacing
+                            boxWidth: 15, // Change box width to 15 for a balanced look
+                            boxHeight: 15, // Change box height to 15
+                            usePointStyle: true, // Use point styles for a modern look
+                            pointStyle: 'circle' // Use circle point style
+                        },
+                        onClick: function(e, legendItem) {
+                            // Do nothing to disable interactivity
                         }
                     },
                     tooltip: {
@@ -143,14 +158,14 @@ function drawCenterText(chart, text, subText) {
     ctx.textBaseline = "middle";
     ctx.fillStyle = "black"; // Set text color to black
     let textX = Math.round((width - ctx.measureText(subText).width) / 2);
-    let textY = (chart.legend.height) + height / 2 - 20; // Adjust position above the main text
+    let textY = height / 2 - 20; // Adjust position above the main text
     ctx.fillText(subText, textX, textY);
 
     // Draw main text (total time)
     fontSize = 28; // Fixed font size for total time
     ctx.font = fontSize + "px sans-serif";
     textX = Math.round((width - ctx.measureText(text).width) / 2);
-    textY = (chart.legend.height) + height / 2 + 8; // Adjust position below the subtext
+    textY = height / 2 + 8; // Adjust position below the subtext
     ctx.fillText(text, textX, textY);
 
     ctx.restore();
