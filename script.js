@@ -101,24 +101,7 @@ function showUsageGraph() {
                 cutout: '80%', // Adjust the cutout percentage to match the style
                 plugins: {
                     legend: {
-                        display: true,
-                        position: 'bottom',
-                        labels: {
-                            color: '#333', // Set the legend text color to a dark shade
-                            font: {
-                                family: 'Helvetica, Arial, sans-serif', // Change font family to a modern sans-serif
-                                size: 14, // Change font size to 14
-                                style: 'normal' // Ensure font style is normal (not italic)
-                            },
-                            padding: 15, // Add padding around legend items for better spacing
-                            boxWidth: 15, // Change box width to 15 for a balanced look
-                            boxHeight: 15, // Change box height to 15
-                            usePointStyle: true, // Use point styles for a modern look
-                            pointStyle: 'circle' // Use circle point style
-                        },
-                        onClick: function(e, legendItem) {
-                            // Do nothing to disable interactivity
-                        }
+                        display: false, // Hiding the legend
                     },
                     tooltip: {
                         enabled: true // Enable tooltips for hover
@@ -142,6 +125,7 @@ function showUsageGraph() {
                 }
             }]
         });
+        document.getElementById('chartLegend').innerHTML = generateLegendHTML(chart);
     });
 }
 
@@ -186,4 +170,16 @@ function generateColors(length) {
         '#001f3f', '#39CCCC', '#85144b', '#B10DC9', '#111111'
     ];
     return colors.slice(0, length);
+}
+
+// Custom function to generate HTML for the legend
+function generateLegendHTML(chart) {
+    const legendHTML = chart.data.labels.map((label, index) => {
+        const color = chart.data.datasets[0].backgroundColor[index];
+        return `<div style="display: flex; align-items: center; margin-bottom: 5px; padding: 3px; font-family: 'Helvetica, Arial, sans-serif'; font-size: 14px;">
+                    <div style="width: 15px; height: 15px; background-color: ${color}; margin-right: 5px; border-radius: 50%;"></div>
+                    <span style="color: #333; font-style: normal;">${label}</span>
+                </div>`;
+    }).join('');
+    return legendHTML;
 }
