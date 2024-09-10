@@ -2,59 +2,74 @@ document.addEventListener('DOMContentLoaded', function() {
     showSection('graphSection');
 
     // Add event listeners for navigation buttons
-    document.getElementById('graphBtn').addEventListener('click', function() {
-        showSection('graphSection');
-    });
+    document.getElementById('graphBtn').addEventListener('click', () => showSection('graphSection'));
+    document.getElementById('timerBtn').addEventListener('click', () => showSection('timerSection'));
+    document.getElementById('youtubeBtn').addEventListener('click', () => showSection('youtubeSection'));
 
-    document.getElementById('timerBtn').addEventListener('click', function() {
-        showSection('timerSection');
-    });
-
-    document.getElementById('youtubeBtn').addEventListener('click', function() {
-        showSection('youtubeSection');
-    });
-
-    document.getElementById('removeRecommendationsBtn').addEventListener('click', removeYouTubeRecommendations);
-
+    document.getElementById('removeRecommendationsBtn').addEventListener('click', toggleYouTubeRecommendations);
     document.getElementById('settimerBtn').addEventListener('click', setTimer);
 
     showUsageGraph();
+    loadBlockedWebsites();
 });
 
 function showSection(sectionId) {
-    const sections = document.querySelectorAll('.content-section');
-    sections.forEach(section => {
-        if (section.id === sectionId) {
-            section.style.display = 'block';
-        } else {
-            section.style.display = 'none';
-        }
+    document.querySelectorAll('.content-section').forEach(section => {
+        section.style.display = section.id === sectionId ? 'block' : 'none';
     });
 }
 
 function setTimer() {
-    const website = document.getElementById('website').value;
-    const dailyLimit = document.getElementById('dailyLimit').value;
-    const sessionLimit = document.getElementById('sessionLimit').value;
+    const website = document.getElementById('website').value.toLowerCase();
+    const dailyLimit = parseInt(document.getElementById('dailyLimit').value);
+    const sessionLimit = parseInt(document.getElementById('sessionLimit').value);
 
-    if (!website) {
-        alert('Please enter a website.');
+    if (!website || isNaN(dailyLimit) || isNaN(sessionLimit)) {
+        alert('Please enter valid website and time limits.');
         return;
     }
 
-    alert(`Website: ${website}\nDaily Limit: ${dailyLimit} minutes\nSession Limit: ${sessionLimit} minutes`);
-
-    // Store the timer settings
-    chrome.storage.local.get({ timers: {} }, function(result) {
-        const timers = result.timers;
-        timers[website] = { dailyLimit, sessionLimit };
-        chrome.storage.local.set({ timers });
+    chrome.storage.local.get({ blockedWebsites: {} }, function(result) {
+        const blockedWebsites = result.blockedWebsites;
+        blockedWebsites[website] = { dailyLimit, sessionLimit };
+        chrome.storage.local.set({ blockedWebsites }, function() {
+            loadBlockedWebsites();
+            alert(`Timer set for ${website}`);
+        });
     });
 }
 
-function removeYouTubeRecommendations() {
+function loadBlockedWebsites() {
+    chrome.storage.local.get({ blockedWebsites: {} }, function(result) {
+        const blockedWebsites = result.blockedWebsites;
+        const blockedList = document.getElementById('blockedWebsites');
+        blockedList.innerHTML = '';
+
+        for (const [website, limits] of Object.entries(blockedWebsites)) {
+            const listItem = document.createElement('li');
+            listItem.textContent = `${website} - Daily: ${limits.dailyLimit}min, Session: ${limits.sessionLimit}min`;
+            
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.onclick = () => deleteBlockedWebsite(website);
+            
+            listItem.appendChild(deleteBtn);
+            blockedList.appendChild(listItem);
+        }
+    });
+}
+
+function deleteBlockedWebsite(website) {
+    chrome.storage.local.get({ blockedWebsites: {} }, function(result) {
+        const blockedWebsites = result.blockedWebsites;
+        delete blockedWebsites[website];
+        chrome.storage.local.set({ blockedWebsites }, loadBlockedWebsites);
+    });
+}
+
+function toggleYouTubeRecommendations() {
     chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, { action: 'removeRecommendations' }, function(response) {
+        chrome.tabs.sendMessage(tabs[0].id, { action: 'toggleRecommendations' }, function(response) {
             console.log(response);
         });
     });
@@ -156,20 +171,12 @@ function drawCenterText(chart, text, subText) {
 }
 
 // Example generateColors function
-function generateColors(length) {
-    const colors = [
-        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-        '#FF9F40', '#7FFF00', '#00FA9A', '#FF5733', '#6E2C00',
-        '#0074D9', '#7FDBFF', '#39CCCC', '#3D9970', '#B10DC9',
-        '#85144b', '#FFDC00', '#FF851B', '#2ECC40', '#FF4136',
-        '#001f3f', '#39CCCC', '#01FF70', '#F012BE', '#7FDBFF',
-        '#85144b', '#B10DC9', '#111111', '#AAAAAA', '#DDDDDD',
-        '#001f3f', '#AAAAAA', '#39CCCC', '#85144b', '#B10DC9',
-        '#111111', '#AAAAAA', '#DDDDDD', '#001f3f', '#39CCCC',
-        '#85144b', '#B10DC9', '#111111', '#AAAAAA', '#DDDDDD',
-        '#001f3f', '#39CCCC', '#85144b', '#B10DC9', '#111111'
-    ];
-    return colors.slice(0, length);
+function generateDynamicColors(count) {
+    const hueStep = 360 / count;
+    return Array.from({ length: count }, (_, i) => {
+        const hue = i * hueStep;
+        return `hsl(${hue}, 70%, 60%)`;
+    });
 }
 
 // Custom function to generate HTML for the legend

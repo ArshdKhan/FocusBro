@@ -77,3 +77,23 @@ chrome.alarms.onAlarm.addListener(alarm => {
 chrome.runtime.onStartup.addListener(() => {
     initializeUsageData();
 });
+
+chrome.webRequest.onBeforeRequest.addListener(
+    function(details) {
+        return new Promise((resolve) => {
+            chrome.storage.local.get({ blockedWebsites: {} }, function(result) {
+                const blockedWebsites = result.blockedWebsites;
+                const url = new URL(details.url);
+                const domain = url.hostname.toLowerCase();
+
+                if (blockedWebsites.hasOwnProperty(domain)) {
+                    resolve({ redirectUrl: "https://arshdkhan.github.io/" });
+                } else {
+                    resolve({ cancel: false });
+                }
+            });
+        });
+    },
+    { urls: ["<all_urls>"] },
+    ["blocking"]
+);

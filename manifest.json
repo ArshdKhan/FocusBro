@@ -8,7 +8,11 @@
         "storage",
         "alarms",
         "activeTab",
-        "*://*/*"
+        "webRequest",
+        "webRequestBlocking"
+    ],
+    "host_permissions": [
+        "<all_urls>"
     ],
     "background": {
         "service_worker": "background.js"
