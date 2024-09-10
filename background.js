@@ -1,99 +1,109 @@
 let usageData = {};
 let activeTabId = null;
 let activeTabDomain = null;
-let activeTabInterval = null;
-const trackingInterval = 60000; // 1 minute
+let trackingInterval = null;
 
 // Function to initialize or reset usageData
 function initializeUsageData() {
     const today = new Date().setHours(0, 0, 0, 0); // Today's date at midnight
-    chrome.storage.local.get(['lastResetTime'], result => {
+    chrome.storage.local.get(['lastResetTime', 'usageData'], result => {
         const lastResetTime = result.lastResetTime || 0;
         if (lastResetTime < today) {
             usageData = {};
             chrome.storage.local.set({ usageData: {}, lastResetTime: today });
             console.log('Usage data reset for the day.');
         } else {
-            chrome.storage.local.get(['usageData'], result => {
-                usageData = result.usageData || {};
-            });
+            usageData = result.usageData || {};
         }
     });
 }
 
-// Initialize or reset usageData on extension startup
-initializeUsageData();
+// Initialize usageData when the extension is installed or updated
+chrome.runtime.onInstalled.addListener(initializeUsageData);
 
-// Event listener for when a tab is activated
+// Update active tab and start tracking
+function updateActiveTab(tabId) {
+    chrome.tabs.get(tabId, (tab) => {
+        if (chrome.runtime.lastError) {
+            console.error(chrome.runtime.lastError);
+            return;
+        }
+
+        if (tab && tab.url) {
+            const url = new URL(tab.url);
+            const newDomain = url.hostname;
+
+            if (newDomain !== activeTabDomain) {
+                activeTabId = tabId;
+                activeTabDomain = newDomain;
+                startTracking();
+            }
+        }
+    });
+}
+
+// Start tracking for the active tab
+function startTracking() {
+    stopTracking();
+
+    if (!activeTabDomain) return;
+
+    if (!usageData[activeTabDomain]) {
+        usageData[activeTabDomain] = 0;
+    }
+
+    trackingInterval = setInterval(() => {
+        usageData[activeTabDomain]++;
+        chrome.storage.local.set({ usageData: usageData });
+        console.log(`Updated usage for ${activeTabDomain}: ${usageData[activeTabDomain]} seconds`);
+    }, 1000); // Update every second
+}
+
+// Stop tracking
+function stopTracking() {
+    if (trackingInterval) {
+        clearInterval(trackingInterval);
+        trackingInterval = null;
+    }
+}
+
+// Listen for tab activation
 chrome.tabs.onActivated.addListener(activeInfo => {
     updateActiveTab(activeInfo.tabId);
 });
 
-// Event listener for when a tab is updated (e.g., URL change)
+// Listen for tab updates
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    if (tabId === activeTabId && changeInfo.status === 'complete') {
+    if (changeInfo.status === 'complete' && tabId === activeTabId) {
         updateActiveTab(tabId);
     }
 });
 
-// Function to update the active tab and start tracking
-function updateActiveTab(tabId) {
-    clearInterval(activeTabInterval);
-    activeTabId = tabId;
-
-    chrome.tabs.get(activeTabId, (tab) => {
-        if (tab && tab.url) {
-            const url = new URL(tab.url);
-            activeTabDomain = url.hostname;
-
-            if (!usageData[activeTabDomain]) {
-                usageData[activeTabDomain] = 0;
+// Listen for windows focus change
+chrome.windows.onFocusChanged.addListener((windowId) => {
+    if (windowId === chrome.windows.WINDOW_ID_NONE) {
+        stopTracking();
+    } else {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            if (tabs[0]) {
+                updateActiveTab(tabs[0].id);
             }
-
-            // Start tracking usage for the active tab
-            activeTabInterval = setInterval(() => {
-                usageData[activeTabDomain] += 1;
-                console.log(`Updated usage data for ${activeTabDomain}: ${usageData[activeTabDomain]} minutes`);
-                chrome.storage.local.set({ usageData: usageData });
-            }, trackingInterval);
-        }
-    });
-}
-
-// Set up an alarm to periodically wake up the service worker and check active tab usage
-chrome.alarms.create('trackUsage', { periodInMinutes: 1 });
-chrome.alarms.onAlarm.addListener(alarm => {
-    if (alarm.name === 'trackUsage' && activeTabId) {
-        // Only update usage data if the active tab is still the same
-        if (activeTabDomain) {
-            usageData[activeTabDomain] += 1;
-            console.log(`Alarm triggered. Updated usage data for ${activeTabDomain}: ${usageData[activeTabDomain]} minutes`);
-            chrome.storage.local.set({ usageData: usageData });
-        }
+        });
     }
 });
 
-// Listen for extension startup
-chrome.runtime.onStartup.addListener(() => {
-    initializeUsageData();
+// Initialize data on startup
+chrome.runtime.onStartup.addListener(initializeUsageData);
+
+// Implement website blocking
+chrome.webNavigation.onBeforeNavigate.addListener((details) => {
+    const url = new URL(details.url);
+    const domain = url.hostname.toLowerCase();
+
+    chrome.storage.local.get({ blockedWebsites: {} }, (result) => {
+        const blockedWebsites = result.blockedWebsites;
+        if (blockedWebsites.hasOwnProperty(domain)) {
+            chrome.tabs.update(details.tabId, { url: "https://arshdkhan.github.io/" });
+        }
+    });
 });
-
-chrome.webRequest.onBeforeRequest.addListener(
-    function(details) {
-        return new Promise((resolve) => {
-            chrome.storage.local.get({ blockedWebsites: {} }, function(result) {
-                const blockedWebsites = result.blockedWebsites;
-                const url = new URL(details.url);
-                const domain = url.hostname.toLowerCase();
-
-                if (blockedWebsites.hasOwnProperty(domain)) {
-                    resolve({ redirectUrl: "https://arshdkhan.github.io/" });
-                } else {
-                    resolve({ cancel: false });
-                }
-            });
-        });
-    },
-    { urls: ["<all_urls>"] },
-    ["blocking"]
-);
